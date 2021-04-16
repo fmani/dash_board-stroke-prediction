@@ -24,7 +24,7 @@ colorpalette=['#f6b48e','#e13242','#35183d','#6f1f57','#ac1759'
 dataset = Dataset()
 corr_matrix = dataset.compute_correlation()
 
-app = dash.Dash(__name__,external_stylesheets=[dbc.themes.FLATLY])
+app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY])
 server = app.server
 
 GITHUB_LOGO = "https://raw.githubusercontent.com/fmani/dash_board-stroke-prediction/main/Logos/GitHub_Logo_White.png"
@@ -171,9 +171,6 @@ app.layout = html.Div(
 
 def generate_density(hm_click,which,admit_feats):
 
-    x_axis = list(dataset.columns)
-    y_axis = list(dataset.columns)
-    
     feat = admit_feats[which]
 
     if hm_click is not None:
@@ -288,42 +285,37 @@ def generate_scatter_plot(hm_click,admit_feats):
 
 
         
-
 def generate_correlation_heatmap(hm_click,admit_feats):
-
+    
     feat_x = admit_feats[0]
     feat_y = admit_feats[1]
-
     
     z = corr_matrix.copy()
-    hovertmp = 'First feature: %{x}<br>Second feature: %{y}<br>Correlation: %{z}<extra></extra>',
-    data = [
-        dict(
-            x=dataset.columns,
-            y=dataset.columns,
-            z=z,
-            type="heatmap",
-            name="",
-            showscale=True,
-            colorscale='Portland',
-            hovertemplate=hovertmp,
-            colorbar=dict(title='Correlation')
-        )
-    ]
+    hovertmp = 'First feature: %{x}<br>Second feature: %{y}<br>Correlation: %{z}'
+    data = [dict(
+        x=dataset.columns,
+        y=dataset.columns,
+        z=z,
+        type="heatmap",
+        name="",
+        showscale=True,
+        colorscale='Portland',
+        hovertemplate=hovertmp,
+        colorbar=dict(title='Correlation'))]
 
     annotation = dataset.get_annotations()
     if hm_click is not None:
         feat_x = hm_click["points"][0]["x"]
         feat_y = hm_click["points"][0]["y"]
-
+        
     if(feat_x not in admit_feats):
         feat_x = admit_feats[0]
     if(feat_y not in admit_feats):
         feat_y = admit_feats[1]
-    
+            
     idx_x = dataset.columns.index(feat_x)
     idx_y = dataset.columns.index(feat_y)
-        
+    
     annotation[dataset.n_cols*idx_x+idx_y].update(size=15,
                                                   font=dict(color='red'))
         
@@ -333,9 +325,8 @@ def generate_correlation_heatmap(hm_click,admit_feats):
         'font':dict( family="sans-serif",
                      size=18,
                      color="Black"),
-        'annotations':annotation,
-    }
-
+        'annotations':annotation}
+    
     for ax in ['xaxis','yaxis']:
         layout[ax]['tickmode']='array'
         layout[ax]['ticktext']=[ dataset.nice_labels[i] for i in dataset.columns]
@@ -343,7 +334,7 @@ def generate_correlation_heatmap(hm_click,admit_feats):
         
     
     return {"data": data, "layout": layout}
-        
+
         
 @app.callback(
     Output("correlation_hm", "figure"),
@@ -367,7 +358,7 @@ def update_heatmap(hm_click,admit_feats,corr_type):
         Input("admit-select", "value"),
     ],
 )
-def update_heatmap(hm_click,admit_feats):
+def update_correlation(hm_click,admit_feats):
     return generate_scatter_plot(hm_click,admit_feats)    
 
 
