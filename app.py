@@ -24,8 +24,8 @@ colorpalette=['#f6b48e','#e13242','#35183d','#6f1f57','#ac1759'
 dataset = Dataset()
 corr_matrix = dataset.compute_correlation()
 
-app = dash.Dash(__name__)
-app = dash.Dash(external_stylesheets=[dbc.themes.FLATLY])
+app = dash.Dash(__name__,external_stylesheets=[dbc.themes.FLATLY])
+server = app.server
 
 GITHUB_LOGO = "https://raw.githubusercontent.com/fmani/dash_board-stroke-prediction/main/Logos/GitHub_Logo_White.png"
 navbar = dbc.Navbar(
