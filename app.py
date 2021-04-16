@@ -28,6 +28,7 @@ app = dash.Dash(__name__,external_stylesheets=[dbc.themes.FLATLY])
 server = app.server
 
 GITHUB_LOGO = "https://raw.githubusercontent.com/fmani/dash_board-stroke-prediction/main/Logos/GitHub_Logo_White.png"
+KAGGLE_LOGO = "https://github.com/fmani/dash_board-stroke-prediction/raw/main/Logos/kaggle_blue.png"
 navbar = dbc.Navbar(
     [
        html.A(
@@ -48,7 +49,7 @@ navbar = dbc.Navbar(
             # Use row and col to control vertical alignment of logo / brand
             dbc.Row(
                 [
-                    dbc.Col(html.Img(src=GITHUB_LOGO, height="50px")),
+                    dbc.Col(html.Img(src=KAGGLE_LOGO, height="50px")),
                     dbc.Col(dbc.NavbarBrand("Link to Kaggle dataset", className="ml-2")),
                     
                 ],
@@ -77,10 +78,10 @@ description_row = html.Div(children=[
     dcc.Markdown('''
     ### Analysis of the stroke risk dataset
     Interactive dashboard allowing to study different aspects which may influence the stroke risk factor.  Instructions:
-    * Select the couple of features by clicking on the correlation matrix element you are interested in;
+    * Select a couple of features by clicking on the correlation matrix element you are interested in;
     * The two plots on the left show the distributions of the selected features, grouped by stroke incidence;
     * The plot of the bottom right corner helps in the visualization of the correlation between the selected features;  
-    From the list ont the right, you can select which features to take into account in the analysis.  
+    From the list on the right, you can select which features to take into account in the analysis.  
     Finally, it is possible to select the correlation function employed with categorical data. The default is the [correlation ratio](https://en.wikipedia.org/wiki/Correlation_ratio)
     
     ''')],
@@ -388,7 +389,7 @@ def update_distr_1(hm_click,admit_feats):
 
 
 if __name__ == '__main__':
-    app.run_server(host = "localhost", port = 8050)
+    app.run_server()
 
 
 

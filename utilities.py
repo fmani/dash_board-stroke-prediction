@@ -7,7 +7,7 @@ from sklearn.impute import SimpleImputer
 # Import scipy stats features
 import scipy.stats as ss
 # Import dython for correlation scores
-from dython.nominal import correlation_ratio,cramers_v
+from dython.nominal import correlation_ratio,cramers_v,theils_u
 
 
 class Dataset:
@@ -24,8 +24,13 @@ class Dataset:
                              'age': 'Age',
                              'hypertension': 'Hypertension'}
 
- 
+
+        self.nice_lab_corrs = { 'unc_cor':'Uncertainty Coefficient',
+                                'cor_rat':'Correlation Ratio',
+                                'cramer':"Cramer's V",
+                                'pearson':'Pearson'}
         
+        self.avail_corrs = ['unc_cor','cor_rat','cramer','pearson']
         self.df = pd.read_csv('./dataset/healthcare-dataset-stroke-data.csv')
         self.df_backup = self.df.copy()
         self._preprocessing(list(self.df.columns))
@@ -79,19 +84,27 @@ class Dataset:
 
 
         
-    def compute_correlation(self,):
+    def compute_correlation(self,corr_type='cor_rat'):
         """
         Computation of the correlation matrix
         https://towardsdatascience.com/the-search-for-categorical-correlation-a1cf7f1888c9
         """
         self.corr_matrix = np.corrcoef(self.df_ordinal.to_numpy().T)
 
-        for i,c1 in enumerate(self.df_ordinal.columns):
-            for j,c2 in enumerate(self.df_ordinal.columns):
-                if((c1 in self.categ_feats) and (c2 in self.categ_feats)):
-                    self.corr_matrix[i,j] = correlation_ratio(self.df_ordinal[c1],self.df_ordinal[c2])
-                if((c1 in self.multi_categ_feats) or (c2 in self.multi_categ_feats)):
-                    self.corr_matrix[i,j] = correlation_ratio(self.df_ordinal[c1],self.df_ordinal[c2])
+        if(corr_type=='cor_rat'):
+            cor_fun = correlation_ratio
+        elif(corr_type=='unc_cor'):
+            cor_fun = theils_u
+        elif(corr_type=='cramer'):
+            cor_fun = cramers_v
+            
+        if(corr_type!='pearson'):
+            for i,c1 in enumerate(self.df_ordinal.columns):
+                for j,c2 in enumerate(self.df_ordinal.columns):
+                    if((c1 in self.categ_feats) and (c2 in self.categ_feats)):
+                        self.corr_matrix[i,j] = cor_fun(self.df_ordinal[c1],self.df_ordinal[c2])
+                    if((c1 in self.multi_categ_feats) or (c2 in self.multi_categ_feats)):
+                        self.corr_matrix[i,j] = cor_fun(self.df_ordinal[c1],self.df_ordinal[c2])
         return self.corr_matrix
                     
     def get_annotations(self,):
