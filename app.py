@@ -350,7 +350,9 @@ def update_distr_1(hm_click,admit_feats):
     return generate_density(hm_click,0,admit_feats),generate_density(hm_click,1,admit_feats)    
 
 
-app.run_server(host = "localhost", port = 8050)
+if __name__ == '__main__':
+    app.run_server()
+
 
 
 
