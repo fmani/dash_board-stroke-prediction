@@ -101,7 +101,7 @@ credit = html.Div(children=[
     A description of the correlation functions employed for the categorical variables can be found here: [Pearson correlation coefficient](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient), [Uncertainty coefficient](https://en.wikipedia.org/wiki/Uncertainty_coefficient), [Cramer's V](https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V), [Correlation ratio](https://en.wikipedia.org/wiki/Correlation_ratio).    
     The dataset analyzed here has been dowloaded from [Kaggle](https://www.kaggle.com/fedesoriano/stroke-prediction-dataset).  
     At [this link](https://github.com/fmani/stroke-prediction-xgboost) you can find the Jupyter notebook where this dataset has been employed to predict the stroke probability, using the XGBoost classifier.  
-    If you liked this app, please add a star on the [GitHub repository](https://github.com/fmani/dash_board-stroke-prediction)! 
+    If you like this app, please star the [GitHub repository](https://github.com/fmani/dash_board-stroke-prediction)! 
     ''')],
     style={
         'margin-left': '50px',
