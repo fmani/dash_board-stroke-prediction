@@ -220,9 +220,6 @@ def generate_density(hm_click,which,admit_feats):
 
 def generate_scatter_plot(hm_click,admit_feats):
 
-    x_axis = list(dataset.columns)
-    y_axis = list(dataset.columns)
-    
     feat_x = admit_feats[0]
     feat_y = admit_feats[1]
 
@@ -294,23 +291,22 @@ def generate_scatter_plot(hm_click,admit_feats):
 
 def generate_correlation_heatmap(hm_click,admit_feats):
 
-    x_axis = list(dataset.columns)
-    y_axis = list(dataset.columns)
-    
     feat_x = admit_feats[0]
     feat_y = admit_feats[1]
 
     
     z = corr_matrix.copy()
+    hovertmp = 'First feature: %{x}<br>Second feature: %{y}<br>Correlation: %{z}<extra></extra>',
     data = [
         dict(
-            x=x_axis,
-            y=y_axis,
+            x=dataset.columns,
+            y=dataset.columns,
             z=z,
             type="heatmap",
             name="",
             showscale=True,
             colorscale='Portland',
+            hovertemplate=hovertmp,
             colorbar=dict(title='Correlation')
         )
     ]
@@ -339,8 +335,11 @@ def generate_correlation_heatmap(hm_click,admit_feats):
                      color="Black"),
         'annotations':annotation,
     }
-    
-    
+
+    for ax in ['xaxis','yaxis']:
+        layout[ax]['tickmode']='array'
+        layout[ax]['ticktext']=[ dataset.nice_labels[i] for i in dataset.columns]
+        layout[ax]['tickvals']=dataset.columns
         
     
     return {"data": data, "layout": layout}
