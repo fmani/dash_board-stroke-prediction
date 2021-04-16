@@ -77,19 +77,38 @@ description_row = html.Div(children=[
     dcc.Markdown('''
     ### Analysis of the stroke risk dataset
     Interactive dashboard allowing to study different aspects which may influence the stroke risk factor.  Instructions:
-    * Select the couple of features by selecting the correlation matrix element in the matrix on the right
-    * The two plots on the left show the distributions of the selected features, grouped by stroke incidence.
+    * Select the couple of features by clicking on the correlation matrix element you are interested in;
+    * The two plots on the left show the distributions of the selected features, grouped by stroke incidence;
+    * The plot of the bottom right corner helps in the visualization of the correlation between the selected features;  
+    From the list ont the right, you can select which features to take into account in the analysis.  
+    Finally, it is possible to select the correlation function employed with categorical data. The default is the [correlation ratio](https://en.wikipedia.org/wiki/Correlation_ratio)
     
     ''')],
     style={
-        'padding': '15px 30px 27px',
-        'margin-left': '20px',
-        'margin-up': '20px',
-        'width': '80%',
-        'max-width': '1024px',
+        'margin-left': '50px',
+        'margin-up': '100px',
         'font-family': 'sans-serif'
     },
 )
+
+
+
+credit = html.Div(children=[
+    dcc.Markdown('''
+    ### Additional information
+    App developed for educational purposes.  
+    A description of the correlation functions employed for the categorical variables can be found here: [Pearson correlation coefficient](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient), [Uncertainty coefficient](https://en.wikipedia.org/wiki/Uncertainty_coefficient), [Cramer's V](https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V), [Correlation ratio](https://en.wikipedia.org/wiki/Correlation_ratio).    
+    The dataset analyzed here has been dowloaded from [Kaggle](https://www.kaggle.com/fedesoriano/stroke-prediction-dataset).  
+    At [this link](https://github.com/fmani/stroke-prediction-xgboost) you can find the Jupyter notebook where this dataset has been employed to predict the stroke probability, using the XGBoost classifier.  
+    If you liked this app, please add a star on the [GitHub repository](https://github.com/fmani/dash_board-stroke-prediction)! 
+    ''')],
+    style={
+        'margin-left': '50px',
+        'margin-up': '100px',
+        'font-family': 'sans-serif'
+    },
+)
+
 
 dropdown_menu = html.Div(children=[html.P("Select Admitted Features"),
                                    dcc.Dropdown(
@@ -97,14 +116,30 @@ dropdown_menu = html.Div(children=[html.P("Select Admitted Features"),
                                        options=[{"label": dataset.nice_labels[i], "value": i} for i in dataset.columns],
                                        value=dataset.columns[:],
                                        multi=True,
-                                   )])
+                                   )],
+                         style={
+                             'padding':'0px 50px 50px 50px 50px',
+                             'margin-right': '200px',
+                             'margin-up': '200px',
+                             'font-family': 'sans-serif'
+                         })
 
+dropdown_correlation = html.Div(children=[dcc.Dropdown(id="correlation-select",
+                                                       options=[{"label": dataset.nice_lab_corrs[i], "value": i} for i in dataset.avail_corrs],
+                                                       value=dataset.avail_corrs[1])],
+                                
+                                style={
+                                    'padding':'0px 50px 50px 50px 50px',
+                                    'margin-right': '200px',
+                                    'margin-up': '200px',
+                                    'font-family': 'sans-serif'}
+)
 
 app.layout = html.Div(
     [
         dbc.Row(dbc.Col(navbar,)),
-        dbc.Row([dbc.Col(description_row,width=5),
-                 dbc.Col(dropdown_menu,width=5)]),
+        dbc.Row([dbc.Col(description_row,width=7),
+                 dbc.Col(children=[dropdown_menu,dropdown_correlation],width=5)]),
         dbc.Row([
 
             dbc.Col(
@@ -128,8 +163,9 @@ app.layout = html.Div(
             ],
             
         ),
-    ]
-)
+    dbc.Row(
+            [dbc.Col(credit,width=12)])
+    ])
 
 
 def generate_density(hm_click,which,admit_feats):
@@ -314,11 +350,12 @@ def generate_correlation_heatmap(hm_click,admit_feats):
     [
         Input("correlation_hm", "clickData"),
         Input("admit-select", "value"),
+        Input("correlation-select","value")
     ],
 )
-def update_heatmap(hm_click,admit_feats):
+def update_heatmap(hm_click,admit_feats,corr_type):
     dataset.update_features(admit_feats)
-    corr_matrix = dataset.compute_correlation()
+    corr_matrix = dataset.compute_correlation(corr_type)
     
     return generate_correlation_heatmap(hm_click,admit_feats)    
 
@@ -351,7 +388,7 @@ def update_distr_1(hm_click,admit_feats):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(host = "localhost", port = 8050)
 
 
 
